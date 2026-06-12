@@ -67,12 +67,21 @@ function createBuffettScript() {
 
   // Build values array
   const header = [["話者", "セリフ", "演出・ナレーション"]];
-  const body = SCRIPT_DATA.map(item => [item.speaker, item.dialogue, item.effect]);
+  const body = SCRIPT_DATA.map(item => {
+    let val = item.dialogue;
+    if (typeof val === 'string' && val.indexOf('=') === 0) {
+      val = "'" + val;
+    }
+    return [item.speaker, val, item.effect];
+  });
   const allData = header.concat(body);
 
   const numRows = allData.length;
   const numCols = 3;
   const range = sheet.getRange(1, 1, numRows, numCols);
+  
+  // Set format to plain text to prevent formula evaluation
+  range.setNumberFormat("@");
   range.setValues(allData);
 
   // Character Color Definition (Curated Palette for Yukkuri Reimu & Marisa)
